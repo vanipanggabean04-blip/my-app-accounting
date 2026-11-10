@@ -6,7 +6,7 @@ import os
 from modules.data_generator import generate_sample_audit_data
 from modules.detector import AuditAnomalyDetector, compute_benfords_law
 from modules.visualizer import plot_anomaly_scatter, plot_benfords_law, plot_anomaly_breakdown
-from modules.openai_assistant import generate_audit_summary, ask_audit_assistant
+from modules.xai_assistant import generate_audit_summary, ask_audit_assistant
 
 # Konfigurasi Halaman
 st.set_page_config(
@@ -15,7 +15,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom Styling & UI Polish
+# Custom Styling & UI Polish (Sidebar & Dashboard)
 st.markdown("""
     <style>
     .main {
@@ -23,70 +23,88 @@ st.markdown("""
     }
     .stMetric {
         background-color: #ffffff;
-        padding: 15px 20px;
-        border-radius: 12px;
+        padding: 16px 20px;
+        border-radius: 14px;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
         border: 1px solid #e2e8f0;
     }
+    /* Sidebar Styling */
+    [data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+        color: #f8fafc;
+    }
+    [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3, [data-testid="stSidebar"] label, [data-testid="stSidebar"] .stMarkdown {
+        color: #f8fafc !important;
+    }
     .author-card {
-        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-        color: #ffffff;
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(56, 189, 248, 0.3);
         padding: 18px;
-        border-radius: 12px;
+        border-radius: 14px;
         margin-bottom: 20px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
     .author-card h4 {
         margin: 0 0 8px 0;
-        color: #38bdf8;
+        color: #38bdf8 !important;
         font-size: 16px;
+        font-weight: 700;
     }
     .author-card p {
         margin: 4px 0;
         font-size: 13px;
-        color: #e2e8f0;
+        color: #cbd5e1 !important;
+    }
+    .sidebar-section {
+        background: rgba(255, 255, 255, 0.04);
+        padding: 14px;
+        border-radius: 10px;
+        margin-bottom: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
     }
     </style>
 """, unsafe_allow_html=True)
 
 # Header Utama dengan Desain Modern
 st.markdown("""
-    <div style='padding: 20px 0; border-bottom: 2px solid #e2e8f0; margin-bottom: 25px;'>
-        <h1 style='color: #0f172a; margin-bottom: 5px;'>🛡️ Intelligent Audit: Sistem Deteksi Anomali Transaksi</h1>
-        <p style='color: #64748b; font-size: 16px;'>Platform Audit Keuangan Otomatis berbasis <b>Hybrid Machine Learning (Isolation Forest)</b> & <b>Deep Learning (Autoencoder)</b> untuk mendeteksi transaksi duplikat, angka bulat berulang, dan nominal di luar pola[cite: 1].</p>
+    <div style='padding: 22px 0; border-bottom: 2px solid #e2e8f0; margin-bottom: 25px;'>
+        <h1 style='color: #0f172a; margin-bottom: 6px; font-weight: 800;'>🛡️ Intelligent Audit: Sistem Deteksi Anomali Transaksi</h1>
+        <p style='color: #64748b; font-size: 16px; margin: 0;'>Platform Audit Keuangan Otomatis berbasis <b>Hybrid Machine Learning (Isolation Forest)</b> & <b>Deep Learning (Autoencoder)</b> untuk mendeteksi transaksi duplikat, angka bulat berulang, dan nominal di luar pola.</p>
     </div>
 """, unsafe_allow_html=True)
 
 # ================= SIDEBAR KONFIGURASI =================
 with st.sidebar:
-    # Profil Pembuat
+    # Profil Pembuat (Estetik & Profesional)
     st.markdown("""
         <div class="author-card">
-            <h4>👤 Profil Pembuat</h4>
+            <h4>👤 Profil Pengembang</h4>
             <p><b>Nama:</b> Thevani Panggabean</p>
             <p><b>Kelas:</b> AKP 7C</p>
             <p><b>NIM:</b> 5304230064</p>
         </div>
     """, unsafe_allow_html=True)
 
-    st.header("⚙️ Panel Konfigurasi Audit")
+    st.markdown("### ⚙️ Panel Kontrol Audit")
     
     # 1. Sumber Data
-    st.subheader("1. Sumber Data Transaksi")
+    st.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
+    st.markdown("#### 📁 1. Sumber Data Transaksi")
     data_source = st.radio(
         "Pilih Sumber Data:",
-        ["Gunakan Data Simulasi Otomatis", "Upload File CSV / Excel"]
+        ["Gunakan Data Simulasi Otomatis", "Upload File CSV / Excel"],
+        label_visibility="collapsed"
     )
     
     uploaded_file = None
     if data_source == "Upload File CSV / Excel":
         uploaded_file = st.file_uploader("Unggah file (.csv atau .xlsx)", type=["csv", "xlsx"])
         st.caption("Kolom wajib: `Transaction_ID`, `Timestamp`, `User_ID`, `Vendor`, `Category`, `Amount`")
+    st.markdown('</div>', unsafe_allow_html=True)
         
-    st.divider()
-    
     # 2. Parameter Model AI
-    st.subheader("2. Parameter Mesin AI")
+    st.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
+    st.markdown("#### 🧠 2. Parameter Mesin AI")
     model_choice = st.selectbox(
         "Arsitektur Deteksi Pola:",
         [
@@ -96,49 +114,49 @@ with st.sidebar:
         ]
     )
     
-    # Deskripsi Penjelasan Model di Dashboard
-    with st.expander("📖 Penjelasan Arsitektur Model AI"):
+    with st.expander("📖 Panduan Arsitektur Model"):
         if model_choice == "Hybrid (Isolation Forest + Autoencoder)":
             st.markdown(
                 "**Hybrid Ensemble Mode**:\n\n"
-                "Menggabungkan kekuatan *Isolation Forest* (ML) dan *Autoencoder* (Deep Learning). "
-                "Sistem menghitung skor komposit untuk menangkap anomali linear maupun penyimpangan pola kompleks secara maksimal."
+                "Menggabungkan kekuatan *Isolation Forest* dan *Autoencoder*. "
+                "Menghitung skor komposit untuk menangkap anomali linear maupun penyimpangan pola kompleks."
             )
         elif model_choice == "Machine Learning (Isolation Forest)":
             st.markdown(
                 "**Isolation Forest (ML)**:\n\n"
-                "Mengisolasi observasi dengan merandom pemisahan nilai fitur. "
-                "Anomali dicirikan oleh jalur pemisahan yang pendek (lebih cepat diisolasi), sangat efektif mendeteksi *outlier* multidimensi."
+                "Mengisolasi observasi dengan pemisahan acak. "
+                "Sangat efektif mendeteksi *outlier* multidimensi pada data keuangan."
             )
         else:
             st.markdown(
                 "**Deep Learning Autoencoder**:\n\n"
-                "Jaringan saraf tiruan (*Neural Network*) simetris (*Bottleneck*) yang dilatih mengenali pola normal. "
-                "Transaksi dengan galeri rekonstruksi (*MSE*) tertinggi ditandai sebagai anomali."
+                "Jaringan saraf tiruan simetris (*Bottleneck*) untuk rekonstruksi pola normal. "
+                "Galeri rekonstruksi (*MSE*) tertinggi menandai anomali."
             )
 
     contamination = st.slider(
         "Sensitivitas Anomali Pola (%):",
         min_value=1, max_value=15, value=5, step=1,
-        help="Persentase estimasi transaksi di luar pola yang dicari oleh algoritma ML/DL."
+        help="Persentase estimasi transaksi di luar pola yang dicari oleh algoritma AI."
     ) / 100.0
+    st.markdown('</div>', unsafe_allow_html=True)
     
-    st.divider()
-    
-    # 3. Konfigurasi OpenAI API Key
-    st.subheader("3. Asisten AI (OpenAI API)")
+    # 3. Konfigurasi API Key Asisten AI
+    st.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
+    st.markdown("#### 🤖 3. Asisten AI Eksekutif")
     default_key = ""
-    if "OPENAI_API_KEY" in st.secrets:
-        default_key = st.secrets["OPENAI_API_KEY"]
-    elif os.environ.get("OPENAI_API_KEY"):
-        default_key = os.environ.get("OPENAI_API_KEY")
+    if "XAI_API_KEY" in st.secrets:
+        default_key = st.secrets["XAI_API_KEY"]
+    elif os.environ.get("XAI_API_KEY"):
+        default_key = os.environ.get("XAI_API_KEY")
         
-    openai_api_key = st.text_input(
-        "Masukkan OpenAI API Key:",
+    api_key_input = st.text_input(
+        "Masukkan API Key:",
         value=default_key,
         type="password",
-        help="Opsional: Digunakan pada tab Asisten AI untuk membuat laporan audit naratif otomatis."
+        help="Digunakan untuk mengaktifkan fitur Asisten AI & Generator Laporan Audit otomatis."
     )
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # ================= LOAD & VALIDASI DATA =================
 @st.cache_data
@@ -196,7 +214,7 @@ tab1, tab2, tab3, tab4 = st.tabs([
     "📊 Peta Visualisasi & Pola",
     "🔍 Daftar Investigasi Anomali",
     "📈 Analisis Benford's Law",
-    "🤖 Asisten Auditor AI (OpenAI)"
+    "🤖 Asisten AI Auditor"
 ])
 
 with tab1:
@@ -272,7 +290,7 @@ with tab3:
     st.dataframe(benford_df, use_container_width=True)
 
 with tab4:
-    st.subheader("🤖 Asisten Auditor Eksekutif (Powered by OpenAI GPT-4o-mini)")
+    st.subheader("🤖 Asisten Auditor Eksekutif")
     st.markdown("Gunakan fitur ini untuk menyusun draf **Laporan Hasil Audit (LHA)** otomatis atau berkonsultasi mengenai temuan data.")
     
     col_ai_1, col_ai_2 = st.columns([1, 1])
@@ -282,7 +300,7 @@ with tab4:
         if st.button("✨ Buat Kesimpulan & Rekomendasi Audit", type="primary"):
             with st.spinner("Sedang menganalisis temuan dan menyusun laporan audit..."):
                 report_md = generate_audit_summary(
-                    api_key=openai_api_key,
+                    api_key=api_key_input,
                     df_anomalies=anomalies_df,
                     total_tx=len(result_df),
                     total_amount=result_df['Amount'].sum()
@@ -300,8 +318,8 @@ with tab4:
         )
         if st.button("Kirim Pertanyaan"):
             if user_q.strip():
-                with st.spinner("Menganalisis data transaksi..."):
-                    answer = ask_audit_assistant(openai_api_key, user_q, anomalies_df)
+                with st.spinner("Menediakan analisis data transaksi..."):
+                    answer = ask_audit_assistant(api_key_input, user_q, anomalies_df)
                     st.markdown(answer)
             else:
                 st.warning("Silakan tulis pertanyaan terlebih dahulu.")
