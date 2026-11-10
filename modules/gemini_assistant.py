@@ -49,7 +49,7 @@ def ask_audit_assistant(api_key: str, user_question: str, df_anomalies: pd.DataF
         return "⚠️ Masukkan Gemini API Key di Sidebar terlebih dahulu."
         
     try:
-        client = genai.Client(api_key=api_key)
+        client = genai.Client(api_key=AQ.Ab8RN6IiXLp0TpmfW5iMfYSvsaViuqjZwJ8OhF9u0wIxLmy8Eg)
         
         context_data = df_anomalies[[
             'Transaction_ID', 'Timestamp', 'User_ID', 'Vendor', 'Category', 'Amount', 'Risk_Score', 'Anomaly_Reasons'
