@@ -96,6 +96,27 @@ with st.sidebar:
         ]
     )
     
+    # --- DESKRIPSI / PENJELASAN MODEL DI DASHBOARD AWAL ---
+    with st.expander("📖 Penjelasan Arsitektur Model AI"):
+        if model_choice == "Hybrid (Isolation Forest + Autoencoder)":
+            st.markdown(
+                "**Hybrid Ensemble Mode**:\n"
+                "Menggabungkan kekuatan *Isolation Forest* (ML) dan *Autoencoder* (Deep Learning). "
+                "Sistem menghitung skor komposit untuk menangkap anomali linear maupun penyimpangan pola kompleks secara maksimal."
+            )
+        elif model_choice == "Machine Learning (Isolation Forest)":
+            st.markdown(
+                "**Isolation Forest (ML)**:\n"
+                "Mengisolasi observasi dengan merandom pemisahan nilai fitur. "
+                "Anomali dicirikan oleh jalur pemisahan yang pendek (lebih cepat diisolasi), sangat efektif mendeteksi *outlier* multidimensi."
+            )
+        else:
+            st.markdown(
+                "**Deep Learning Autoencoder**:\n"
+                "Jaringan saraf tiruan (*Neural Network*) simetris (*Bottleneck*) yang dilatih mengenali pola normal. "
+                "Transaksi dengan galeri rekonstruksi (*MSE*) tertinggi ditandai sebagai anomali."
+            )
+
     contamination = st.slider(
         "Sensitivitas Anomali Pola (%):",
         min_value=1, max_value=15, value=5, step=1,
