@@ -15,7 +15,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom Styling & UI Polish (Sidebar & Dashboard)
+# Custom Styling & UI Polish (Clean & Modern Light Sidebar)
 st.markdown("""
     <style>
     .main {
@@ -28,39 +28,36 @@ st.markdown("""
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
         border: 1px solid #e2e8f0;
     }
-    /* Sidebar Styling */
+    /* Sidebar Styling - Clean & Modern Light Theme */
     [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
-        color: #f8fafc;
-    }
-    [data-testid="stSidebar"] h2, [data-testid="stSidebar"] h3, [data-testid="stSidebar"] label, [data-testid="stSidebar"] .stMarkdown {
-        color: #f8fafc !important;
+        background-color: #ffffff;
+        border-right: 1px solid #e2e8f0;
     }
     .author-card {
-        background: rgba(255, 255, 255, 0.07);
-        border: 1px solid rgba(56, 189, 248, 0.3);
-        padding: 18px;
-        border-radius: 14px;
+        background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+        border: 1px solid #cbd5e1;
+        padding: 16px;
+        border-radius: 12px;
         margin-bottom: 20px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        box-shadow: 0 2px 6px rgba(0,0,0,0.03);
     }
     .author-card h4 {
-        margin: 0 0 8px 0;
-        color: #38bdf8 !important;
-        font-size: 16px;
+        margin: 0 0 6px 0;
+        color: #0f172a !important;
+        font-size: 15px;
         font-weight: 700;
     }
     .author-card p {
-        margin: 4px 0;
+        margin: 3px 0;
         font-size: 13px;
-        color: #cbd5e1 !important;
+        color: #475569 !important;
     }
     .sidebar-section {
-        background: rgba(255, 255, 255, 0.04);
+        background: #f8fafc;
         padding: 14px;
         border-radius: 10px;
         margin-bottom: 14px;
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        border: 1px solid #e2e8f0;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -75,7 +72,7 @@ st.markdown("""
 
 # ================= SIDEBAR KONFIGURASI =================
 with st.sidebar:
-    # Profil Pembuat (Estetik & Profesional)
+    # Profil Pembuat (Clean Light Theme)
     st.markdown("""
         <div class="author-card">
             <h4>👤 Profil Pengembang</h4>
@@ -318,7 +315,7 @@ with tab4:
         )
         if st.button("Kirim Pertanyaan"):
             if user_q.strip():
-                with st.spinner("Menediakan analisis data transaksi..."):
+                with st.spinner("Mendiskusikan data transaksi..."):
                     answer = ask_audit_assistant(api_key_input, user_q, anomalies_df)
                     st.markdown(answer)
             else:
