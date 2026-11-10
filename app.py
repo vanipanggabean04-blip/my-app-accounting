@@ -137,12 +137,6 @@ with st.sidebar:
         help="Persentase estimasi transaksi di luar pola yang dicari oleh algoritma AI."
     ) / 100.0
     st.markdown('</div>', unsafe_allow_html=True)
-    
-    # Info Status Asisten Lokal
-    st.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
-    st.markdown("#### 🤖 3. Asisten AI Eksekutif")
-    st.info("💡 Asisten AI aktif berjalan **100% Offline (Tanpa API Key)** secara otomatis menganalisis temuan audit.")
-    st.markdown('</div>', unsafe_allow_html=True)
 
 # ================= LOAD & VALIDASI DATA =================
 @st.cache_data
@@ -276,8 +270,8 @@ with tab3:
     st.dataframe(benford_df, use_container_width=True)
 
 with tab4:
-    st.subheader("🤖 Asisten AI Auditor (Mode Lokal / Offline)")
-    st.markdown("Fitur asisten ini menghasilkan draf **Laporan Hasil Audit (LHA)** dan menjawab pertanyaan data secara otomatis secara lokal tanpa memerlukan API Key eksternal.")
+    st.subheader("🤖 Asisten AI Auditor")
+    st.markdown("Fitur asisten ini menghasilkan draf **Laporan Hasil Audit (LHA)** dan menjawab pertanyaan data secara otomatis.")
     
     col_ai_1, col_ai_2 = st.columns([1, 1])
     
