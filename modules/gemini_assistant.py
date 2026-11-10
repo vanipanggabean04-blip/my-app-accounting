@@ -9,7 +9,7 @@ def generate_audit_summary(api_key: str, df_anomalies: pd.DataFrame, total_tx: i
         return "⚠️ Masukkan Gemini API Key di Sidebar terlebih dahulu untuk menggunakan fitur Asisten Auditor AI."
         
     try:
-        client = genai.Client(api_key=api_key)
+        client = genai.Client(api_key=AQ.Ab8RN6K_krFOLrd0dcKD0nNkZbLJ0YwHBh_duoHADbpAqaYM8A)
         
         top_anomalies = df_anomalies.sort_values('Risk_Score', ascending=False).head(15)
         records_text = top_anomalies[[
@@ -68,7 +68,7 @@ def ask_audit_assistant(api_key: str, user_question: str, df_anomalies: pd.DataF
         """
         
         response = client.models.generate_content(
-            model='gemini-2.5-flash',
+            model='gemini-3.5-flash',
             contents=prompt
         )
         return response.text
