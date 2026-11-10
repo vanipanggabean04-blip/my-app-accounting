@@ -2,7 +2,7 @@ import pandas as pd
 
 def generate_local_audit_summary(df_anomalies: pd.DataFrame, total_tx: int, total_amount: float) -> str:
     """
-    Menyusun laporan audit eksekutif secara otomatis menggunakan pendekatan lokal berbasis statistik dan aturan (Rule-Based).
+    Menyusun laporan audit eksekutif secara otomatis menggunakan pendekatan berbasis statistik dan aturan (Rule-Based).
     """
     if len(df_anomalies) == 0:
         return "### 📄 Laporan Hasil Audit Eksekutif\n\nBerdasarkan pemeriksaan, **tidak ditemukan transaksi mencurigakan** pada dataset ini. Seluruh transaksi berada dalam batas kewajaran parameter normal."
@@ -39,34 +39,34 @@ def generate_local_audit_summary(df_anomalies: pd.DataFrame, total_tx: int, tota
 
 def answer_local_audit_question(user_question: str, df_anomalies: pd.DataFrame) -> str:
     """
-    Menjawab pertanyaan pengguna secara lokal berdasarkan pencarian kata kunci pada data temuan anomali.
+    Menjawab pertanyaan pengguna berdasarkan pencarian kata kunci pada data temuan anomali.
     """
     q_lower = user_question.lower()
     
     if "user" in q_lower or "siapa" in q_lower or "pengguna" in q_lower:
         top_u = df_anomalies['User_ID'].value_counts().head(3)
-        res = "#### 🤖 Jawaban Asisten Audit (Lokal):\n\nUser/Pengguna yang paling sering terlibat dalam transaksi mencurigakan adalah:\n"
+        res = "#### 🤖 Jawaban Asisten Audit:\n\nUser/Pengguna yang paling sering terlibat dalam transaksi mencurigakan adalah:\n"
         for usr, count in top_u.items():
             res += f"- **{usr}**: {count} transaksi mencurigakan\n"
         return res
         
     elif "vendor" in q_lower or "pemberi" in q_lower:
         top_v = df_anomalies['Vendor'].value_counts().head(3)
-        res = "#### 🤖 Jawaban Asisten Audit (Lokal):\n\nVendor yang paling sering muncul pada daftar temuan anomali adalah:\n"
+        res = "#### 🤖 Jawaban Asisten Audit:\n\nVendor yang paling sering muncul pada daftar temuan anomali adalah:\n"
         for vnd, count in top_v.items():
             res += f"- **{vnd}**: {count} transaksi\n"
         return res
         
     elif "tertinggi" in q_lower or "besar" in q_lower or "nominal" in q_lower:
         top_amt = df_anomalies.sort_values('Amount', ascending=False).head(3)
-        res = "#### 🤖 Jawaban Asisten Audit (Lokal):\n\nTransaksi dengan nominal terbesar dalam temuan anomali:\n"
+        res = "#### 🤖 Jawaban Asisten Audit:\n\nTransaksi dengan nominal terbesar dalam temuan anomali:\n"
         for _, r in top_amt.iterrows():
             res += f"- **{r['Transaction_ID']}** ({r['Vendor']}): Rp {r['Amount']:,.0f} [Skor Risiko: {r['Risk_Score']}] - *{r['Anomaly_Reasons']}*\n"
         return res
         
     elif "duplikat" in q_lower:
         dups = df_anomalies[df_anomalies['flag_duplicate']]
-        return f"#### 🤖 Jawaban Asisten Audit (Lokal):\n\nTerdapat **{len(dups)} transaksi** yang terdeteksi memiliki indikasi duplikat. Silakan cek pada Tab 'Daftar Investigasi Anomali' dengan filter *Indikasi Duplikat*."
+        return f"#### 🤖 Jawaban Asisten Audit:\n\nTerdapat **{len(dups)} transaksi** yang terdeteksi memiliki indikasi duplikat. Silakan cek pada Tab 'Daftar Investigasi Anomali' dengan filter *Indikasi Duplikat*."
         
     else:
-        return f"#### 🤖 Jawaban Asisten Audit (Lokal):\n\nBerdasarkan analisis lokal pada **{len(df_anomalies)} transaksi mencurigakan**, temuan didominasi oleh anomali pola nominal dan pengulangan angka bulat. Coba tanyakan terkait *'siapa user tertinggi'*, *'vendor'*, *'nominal terbesar'*, atau *'duplikat'*."
+        return f"#### 🤖 Jawaban Asisten Audit:\n\nBerdasarkan analisis pada **{len(df_anomalies)} transaksi mencurigakan**, temuan didominasi oleh anomali pola nominal dan pengulangan angka bulat. Coba tanyakan terkait *'siapa user tertinggi'*, *'vendor'*, *'nominal terbesar'*, atau *'duplikat'*."
