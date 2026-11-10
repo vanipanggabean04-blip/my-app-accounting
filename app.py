@@ -6,7 +6,7 @@ import os
 from modules.data_generator import generate_sample_audit_data
 from modules.detector import AuditAnomalyDetector, compute_benfords_law
 from modules.visualizer import plot_anomaly_scatter, plot_benfords_law, plot_anomaly_breakdown
-from modules.gemini_assistant import generate_audit_summary, ask_audit_assistant
+from modules.openai_assistant import generate_audit_summary, ask_audit_assistant
 
 # Konfigurasi Halaman
 st.set_page_config(
@@ -96,23 +96,23 @@ with st.sidebar:
         ]
     )
     
-    # --- DESKRIPSI / PENJELASAN MODEL DI DASHBOARD AWAL ---
+    # Deskripsi Penjelasan Model di Dashboard
     with st.expander("📖 Penjelasan Arsitektur Model AI"):
         if model_choice == "Hybrid (Isolation Forest + Autoencoder)":
             st.markdown(
-                "**Hybrid Ensemble Mode**:\n"
+                "**Hybrid Ensemble Mode**:\n\n"
                 "Menggabungkan kekuatan *Isolation Forest* (ML) dan *Autoencoder* (Deep Learning). "
                 "Sistem menghitung skor komposit untuk menangkap anomali linear maupun penyimpangan pola kompleks secara maksimal."
             )
         elif model_choice == "Machine Learning (Isolation Forest)":
             st.markdown(
-                "**Isolation Forest (ML)**:\n"
+                "**Isolation Forest (ML)**:\n\n"
                 "Mengisolasi observasi dengan merandom pemisahan nilai fitur. "
                 "Anomali dicirikan oleh jalur pemisahan yang pendek (lebih cepat diisolasi), sangat efektif mendeteksi *outlier* multidimensi."
             )
         else:
             st.markdown(
-                "**Deep Learning Autoencoder**:\n"
+                "**Deep Learning Autoencoder**:\n\n"
                 "Jaringan saraf tiruan (*Neural Network*) simetris (*Bottleneck*) yang dilatih mengenali pola normal. "
                 "Transaksi dengan galeri rekonstruksi (*MSE*) tertinggi ditandai sebagai anomali."
             )
@@ -125,16 +125,16 @@ with st.sidebar:
     
     st.divider()
     
-    # 3. Konfigurasi Gemini API Key
-    st.subheader("3. Asisten AI (Gemini API)")
+    # 3. Konfigurasi OpenAI API Key
+    st.subheader("3. Asisten AI (OpenAI API)")
     default_key = ""
-    if "GEMINI_API_KEY" in st.secrets:
-        default_key = st.secrets["GEMINI_API_KEY"]
-    elif os.environ.get("GEMINI_API_KEY"):
-        default_key = os.environ.get("GEMINI_API_KEY")
+    if "OPENAI_API_KEY" in st.secrets:
+        default_key = st.secrets["OPENAI_API_KEY"]
+    elif os.environ.get("OPENAI_API_KEY"):
+        default_key = os.environ.get("OPENAI_API_KEY")
         
-    gemini_api_key = st.text_input(
-        "Masukkan Gemini API Key:",
+    openai_api_key = st.text_input(
+        "Masukkan OpenAI API Key:",
         value=default_key,
         type="password",
         help="Opsional: Digunakan pada tab Asisten AI untuk membuat laporan audit naratif otomatis."
@@ -196,7 +196,7 @@ tab1, tab2, tab3, tab4 = st.tabs([
     "📊 Peta Visualisasi & Pola",
     "🔍 Daftar Investigasi Anomali",
     "📈 Analisis Benford's Law",
-    "🤖 Asisten Auditor AI (Gemini)"
+    "🤖 Asisten Auditor AI (OpenAI)"
 ])
 
 with tab1:
@@ -272,7 +272,7 @@ with tab3:
     st.dataframe(benford_df, use_container_width=True)
 
 with tab4:
-    st.subheader("🤖 Asisten Auditor Eksekutif (Powered by Gemini 2.5 Flash)")
+    st.subheader("🤖 Asisten Auditor Eksekutif (Powered by OpenAI GPT-4o-mini)")
     st.markdown("Gunakan fitur ini untuk menyusun draf **Laporan Hasil Audit (LHA)** otomatis atau berkonsultasi mengenai temuan data.")
     
     col_ai_1, col_ai_2 = st.columns([1, 1])
@@ -282,7 +282,7 @@ with tab4:
         if st.button("✨ Buat Kesimpulan & Rekomendasi Audit", type="primary"):
             with st.spinner("Sedang menganalisis temuan dan menyusun laporan audit..."):
                 report_md = generate_audit_summary(
-                    api_key=gemini_api_key,
+                    api_key=openai_api_key,
                     df_anomalies=anomalies_df,
                     total_tx=len(result_df),
                     total_amount=result_df['Amount'].sum()
@@ -301,7 +301,7 @@ with tab4:
         if st.button("Kirim Pertanyaan"):
             if user_q.strip():
                 with st.spinner("Menganalisis data transaksi..."):
-                    answer = ask_audit_assistant(gemini_api_key, user_q, anomalies_df)
+                    answer = ask_audit_assistant(openai_api_key, user_q, anomalies_df)
                     st.markdown(answer)
             else:
                 st.warning("Silakan tulis pertanyaan terlebih dahulu.")
