@@ -6,7 +6,7 @@ import os
 from modules.data_generator import generate_sample_audit_data
 from modules.detector import AuditAnomalyDetector, compute_benfords_law
 from modules.visualizer import plot_anomaly_scatter, plot_benfords_law, plot_anomaly_breakdown
-from modules.deepseek_assistant import generate_audit_summary, ask_audit_assistant
+from modules.local_assistant import generate_local_audit_summary, answer_local_audit_question
 
 # Konfigurasi Halaman
 st.set_page_config(
@@ -138,36 +138,10 @@ with st.sidebar:
     ) / 100.0
     st.markdown('</div>', unsafe_allow_html=True)
     
-    # 3. Konfigurasi API Key Asisten AI (DeepSeek) dengan Tombol Simpan
+    # Info Status Asisten Lokal
     st.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
     st.markdown("#### 🤖 3. Asisten AI Eksekutif")
-    
-    if "saved_deepseek_key" not in st.session_state:
-        if "DEEPSEEK_API_KEY" in st.secrets:
-            st.session_state["saved_deepseek_key"] = st.secrets["DEEPSEEK_API_KEY"]
-        elif os.environ.get("DEEPSEEK_API_KEY"):
-            st.session_state["saved_deepseek_key"] = os.environ.get("DEEPSEEK_API_KEY")
-        else:
-            st.session_state["saved_deepseek_key"] = ""
-            
-    temp_key_input = st.text_input(
-        "Masukkan DeepSeek API Key:",
-        value=st.session_state["saved_deepseek_key"],
-        type="password",
-        help="Masukkan API key Anda lalu klik tombol Simpan di bawah."
-    )
-    
-    col_save1, col_save2 = st.columns([1, 1])
-    with col_save1:
-        if st.button("💾 Simpan Key", use_container_width=True):
-            st.session_state["saved_deepseek_key"] = temp_key_input
-            st.success("API Key berhasil disimpan!")
-    with col_save2:
-        if st.button("🗑️ Hapus", use_container_width=True):
-            st.session_state["saved_deepseek_key"] = ""
-            st.rerun()
-            
-    api_key_input = st.session_state["saved_deepseek_key"]
+    st.info("💡 Asisten AI aktif berjalan **100% Offline (Tanpa API Key)** secara otomatis menganalisis temuan audit.")
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ================= LOAD & VALIDASI DATA =================
@@ -302,17 +276,16 @@ with tab3:
     st.dataframe(benford_df, use_container_width=True)
 
 with tab4:
-    st.subheader("🤖 Asisten Auditor Eksekutif")
-    st.markdown("Gunakan fitur ini untuk menyusun draf **Laporan Hasil Audit (LHA)** otomatis atau berkonsultasi mengenai temuan data.")
+    st.subheader("🤖 Asisten AI Auditor (Mode Lokal / Offline)")
+    st.markdown("Fitur asisten ini menghasilkan draf **Laporan Hasil Audit (LHA)** dan menjawab pertanyaan data secara otomatis secara lokal tanpa memerlukan API Key eksternal.")
     
     col_ai_1, col_ai_2 = st.columns([1, 1])
     
     with col_ai_1:
         st.markdown("#### 📄 Generator Laporan Audit Otomatis")
-        if st.button("✨ Buat Kesimpulan & Rekomendasi Audit", type="primary"):
-            with st.spinner("Sedang menganalisis temuan dan menyusun laporan audit..."):
-                report_md = generate_audit_summary(
-                    api_key=api_key_input,
+        if st.button("✨ Buat Laporan Hasil Audit (LHA)", type="primary"):
+            with st.spinner("Menyusun laporan audit otomatis..."):
+                report_md = generate_local_audit_summary(
                     df_anomalies=anomalies_df,
                     total_tx=len(result_df),
                     total_amount=result_df['Amount'].sum()
@@ -326,12 +299,12 @@ with tab4:
         st.markdown("#### 💬 Tanya Jawab Data Temuan")
         user_q = st.text_input(
             "Tanyakan sesuatu tentang transaksi mencurigakan:",
-            placeholder="Contoh: Siapa user dan vendor yang paling sering melakukan transaksi angka bulat?"
+            placeholder="Contoh: Siapa user tertinggi, vendor, atau nominal terbesar?"
         )
         if st.button("Kirim Pertanyaan"):
             if user_q.strip():
-                with st.spinner("Mendiskusikan data transaksi..."):
-                    answer = ask_audit_assistant(api_key_input, user_q, anomalies_df)
+                with st.spinner("Menganalisis data..."):
+                    answer = answer_local_audit_question(user_q, anomalies_df)
                     st.markdown(answer)
             else:
                 st.warning("Silakan tulis pertanyaan terlebih dahulu.")
