@@ -138,21 +138,36 @@ with st.sidebar:
     ) / 100.0
     st.markdown('</div>', unsafe_allow_html=True)
     
-    # 3. Konfigurasi API Key Asisten AI (DeepSeek)
+    # 3. Konfigurasi API Key Asisten AI (DeepSeek) dengan Tombol Simpan
     st.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
     st.markdown("#### 🤖 3. Asisten AI Eksekutif")
-    default_key = ""
-    if "DEEPSEEK_API_KEY" in st.secrets:
-        default_key = st.secrets["DEEPSEEK_API_KEY"]
-    elif os.environ.get("DEEPSEEK_API_KEY"):
-        default_key = os.environ.get("DEEPSEEK_API_KEY")
-        
-    api_key_input = st.text_input(
+    
+    if "saved_deepseek_key" not in st.session_state:
+        if "DEEPSEEK_API_KEY" in st.secrets:
+            st.session_state["saved_deepseek_key"] = st.secrets["DEEPSEEK_API_KEY"]
+        elif os.environ.get("DEEPSEEK_API_KEY"):
+            st.session_state["saved_deepseek_key"] = os.environ.get("DEEPSEEK_API_KEY")
+        else:
+            st.session_state["saved_deepseek_key"] = ""
+            
+    temp_key_input = st.text_input(
         "Masukkan DeepSeek API Key:",
-        value=default_key,
+        value=st.session_state["saved_deepseek_key"],
         type="password",
-        help="Digunakan untuk mengaktifkan fitur Asisten AI & Generator Laporan Audit otomatis."
+        help="Masukkan API key Anda lalu klik tombol Simpan di bawah."
     )
+    
+    col_save1, col_save2 = st.columns([1, 1])
+    with col_save1:
+        if st.button("💾 Simpan Key", use_container_width=True):
+            st.session_state["saved_deepseek_key"] = temp_key_input
+            st.success("API Key berhasil disimpan!")
+    with col_save2:
+        if st.button("🗑️ Hapus", use_container_width=True):
+            st.session_state["saved_deepseek_key"] = ""
+            st.rerun()
+            
+    api_key_input = st.session_state["saved_deepseek_key"]
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ================= LOAD & VALIDASI DATA =================
