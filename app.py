@@ -6,7 +6,7 @@ import os
 from modules.data_generator import generate_sample_audit_data
 from modules.detector import AuditAnomalyDetector, compute_benfords_law
 from modules.visualizer import plot_anomaly_scatter, plot_benfords_law, plot_anomaly_breakdown
-from modules.xai_assistant import generate_audit_summary, ask_audit_assistant
+from modules.deepseek_assistant import generate_audit_summary, ask_audit_assistant
 
 # Konfigurasi Halaman
 st.set_page_config(
@@ -138,17 +138,17 @@ with st.sidebar:
     ) / 100.0
     st.markdown('</div>', unsafe_allow_html=True)
     
-    # 3. Konfigurasi API Key Asisten AI
+    # 3. Konfigurasi API Key Asisten AI (DeepSeek)
     st.markdown('<div class="sidebar-section">', unsafe_allow_html=True)
     st.markdown("#### 🤖 3. Asisten AI Eksekutif")
     default_key = ""
-    if "XAI_API_KEY" in st.secrets:
-        default_key = st.secrets["XAI_API_KEY"]
-    elif os.environ.get("XAI_API_KEY"):
-        default_key = os.environ.get("XAI_API_KEY")
+    if "DEEPSEEK_API_KEY" in st.secrets:
+        default_key = st.secrets["DEEPSEEK_API_KEY"]
+    elif os.environ.get("DEEPSEEK_API_KEY"):
+        default_key = os.environ.get("DEEPSEEK_API_KEY")
         
     api_key_input = st.text_input(
-        "Masukkan API Key:",
+        "Masukkan DeepSeek API Key:",
         value=default_key,
         type="password",
         help="Digunakan untuk mengaktifkan fitur Asisten AI & Generator Laporan Audit otomatis."
