@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 import os
 
 from modules.data_generator import generate_sample_audit_data
@@ -9,19 +10,65 @@ from modules.gemini_assistant import generate_audit_summary, ask_audit_assistant
 
 # Konfigurasi Halaman
 st.set_page_config(
-    page_title="AI Audit - Deteksi Anomali Transaksi",
+    page_title="Sistem Deteksi Anomali Transaksi (Audit AI)",
     page_icon="🛡️",
     layout="wide"
 )
 
-st.title("🛡️ Sistem Deteksi Anomali Transaksi (Audit AI)")
-st.markdown(
-    "Aplikasi audit berbasis **Hybrid Machine Learning (Isolation Forest) & Deep Learning (Autoencoder)** "
-    "untuk mendeteksi **Transaksi Duplikat**, **Angka Bulat Berulang**, dan **Nominal di Luar Pola**."
-)
+# Custom Styling & UI Polish
+st.markdown("""
+    <style>
+    .main {
+        background-color: #f8fafc;
+    }
+    .stMetric {
+        background-color: #ffffff;
+        padding: 15px 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        border: 1px solid #e2e8f0;
+    }
+    .author-card {
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        color: #ffffff;
+        padding: 18px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .author-card h4 {
+        margin: 0 0 8px 0;
+        color: #38bdf8;
+        font-size: 16px;
+    }
+    .author-card p {
+        margin: 4px 0;
+        font-size: 13px;
+        color: #e2e8f0;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# Header Utama dengan Desain Modern
+st.markdown("""
+    <div style='padding: 20px 0; border-bottom: 2px solid #e2e8f0; margin-bottom: 25px;'>
+        <h1 style='color: #0f172a; margin-bottom: 5px;'>🛡️ Intelligent Audit: Sistem Deteksi Anomali Transaksi</h1>
+        <p style='color: #64748b; font-size: 16px;'>Platform Audit Keuangan Otomatis berbasis <b>Hybrid Machine Learning (Isolation Forest)</b> & <b>Deep Learning (Autoencoder)</b> untuk mendeteksi transaksi duplikat, angka bulat berulang, dan nominal di luar pola[cite: 1].</p>
+    </div>
+""", unsafe_allow_html=True)
 
 # ================= SIDEBAR KONFIGURASI =================
 with st.sidebar:
+    # Profil Pembuat
+    st.markdown("""
+        <div class="author-card">
+            <h4>👤 Profil Pembuat</h4>
+            <p><b>Nama:</b> Thevani Panggabean</p>
+            <p><b>Kelas:</b> AKP 7C</p>
+            <p><b>NIM:</b> 5304230064</p>
+        </div>
+    """, unsafe_allow_html=True)
+
     st.header("⚙️ Panel Konfigurasi Audit")
     
     # 1. Sumber Data
@@ -90,7 +137,7 @@ else:
             st.error(f"Gagal membaca file: {e}")
             st.stop()
     else:
-        st.info("👈 Silakan unggah file CSV/Excel di Sidebar, atau pilih **Gunakan Data Simulasi Otomatis** untuk mencoba aplikasi.")
+        st.info("👈 Silakan unggah file CSV/Excel di Sidebar, atau pilih **Gunakan Data Simulasi Otomatis** untuk memulai.")
         st.stop()
 
 required_cols = {'Transaction_ID', 'Timestamp', 'User_ID', 'Vendor', 'Category', 'Amount'}
@@ -107,7 +154,7 @@ anomalies_df = result_df[result_df['Is_Anomaly']].sort_values('Risk_Score', asce
 # ================= METRIK RINGKASAN EKSEKUTIF =================
 col1, col2, col3, col4 = st.columns(4)
 with col1:
-    st.metric("Total Transaksi Diperiksa", f"{len(result_df):,}")
+    st.metric("Total Transaksi", f"{len(result_df):,}")
 with col2:
     st.metric(
         "Transaksi Mencurigakan",
@@ -119,9 +166,9 @@ with col3:
     st.metric("Duplikat & Angka Bulat", f"{int(result_df['flag_duplicate'].sum() + result_df['flag_repeating_round'].sum())} Temuan")
 with col4:
     risk_value = anomalies_df['Amount'].sum()
-    st.metric("Total Nominal Berisiko", f"Rp {risk_value:,.0f}")
+    st.metric("Total Nilai Berisiko", f"Rp {risk_value:,.0f}")
 
-st.divider()
+st.markdown("<br>", unsafe_allow_html=True)
 
 # ================= TABS UTAMA =================
 tab1, tab2, tab3, tab4 = st.tabs([
@@ -138,7 +185,7 @@ with tab1:
     with c_left:
         st.plotly_chart(plot_anomaly_breakdown(result_df), use_container_width=True)
     with c_right:
-        st.subheader("Top 5 Entitas / User dengan Skor Risiko Tertinggi")
+        st.subheader("Top 5 Entitas / User dengan Risiko Tertinggi")
         user_risk = anomalies_df.groupby('User_ID').agg(
             Jumlah_Anomali=('Transaction_ID', 'count'),
             Total_Nominal_Anomali=('Amount', 'sum'),
@@ -153,7 +200,7 @@ with tab1:
         )
 
 with tab2:
-    st.subheader("Daftar Transaksi Mencurigakan (Diurutkan berdasarkan Skor Risiko)")
+    st.subheader("Daftar Transaksi Mencurigakan (Berdasarkan Skor Risiko)")
     
     filter_type = st.multiselect(
         "Filter Berdasarkan Jenis Temuan:",
@@ -185,7 +232,6 @@ with tab2:
         height=420
     )
     
-    # Tombol Download CSV Hasil Audit
     csv_export = filtered_anomalies[display_cols].to_csv(index=False).encode('utf-8')
     st.download_button(
         label="📥 Unduh Laporan Transaksi Mencurigakan (CSV)",
@@ -198,7 +244,7 @@ with tab3:
     st.subheader("Uji Kepatuhan Digit Pertama (Benford's Law)")
     st.markdown(
         "**Benford's Law** digunakan oleh auditor forensik untuk mendeteksi apakah nominal transaksi "
-        "terjadi secara alami atau sengaja dikarang oleh manusia (misalnya memecah kuitansi atau mengarang angka bulat)."
+        "terjadi secara alami atau sengaja dimanipulasi/dikarang oleh manusia."
     )
     benford_df = compute_benfords_law(result_df['Amount'])
     st.plotly_chart(plot_benfords_law(benford_df), use_container_width=True)
@@ -206,7 +252,7 @@ with tab3:
 
 with tab4:
     st.subheader("🤖 Asisten Auditor Eksekutif (Powered by Gemini 2.5 Flash)")
-    st.markdown("Gunakan fitur ini untuk menyusun draf **Laporan Hasil Audit (LHA)** otomatis atau berkonsultasi mengenai temuan data di atas.")
+    st.markdown("Gunakan fitur ini untuk menyusun draf **Laporan Hasil Audit (LHA)** otomatis atau berkonsultasi mengenai temuan data.")
     
     col_ai_1, col_ai_2 = st.columns([1, 1])
     
@@ -238,3 +284,13 @@ with tab4:
                     st.markdown(answer)
             else:
                 st.warning("Silakan tulis pertanyaan terlebih dahulu.")
+
+# Footer Estetik
+st.markdown("---")
+st.markdown(
+    "<div style='text-align: center; color: #64748b; font-size: 13px; padding: 10px;'>"
+    "Dibuat dengan ❤️ oleh <b>Thevani Panggabean</b> | Kelas: <b>AKP 7C</b> | NIM: <b>5304230064</b><br>"
+    "Sistem Deteksi Anomali Transaksi (Audit AI) • Powered by Python & Streamlit"
+    "</div>",
+    unsafe_allow_html=True
+)
