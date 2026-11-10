@@ -52,7 +52,7 @@ def ask_audit_assistant(api_key: str, user_question: str, df_anomalies: pd.DataF
         
     try:
         client = openai.OpenAI(
-            api_key=api_key,
+            api_key=sk-0930d0ee74e14cde99482cea3637a86e,
             base_url="https://api.deepseek.com"
         )
         
