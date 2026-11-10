@@ -1,4 +1,5 @@
-import openai
+import urllib.request
+import json
 import pandas as pd
 
 def generate_audit_summary(api_key: str, df_anomalies: pd.DataFrame, total_tx: int, total_amount: float) -> str:
@@ -6,10 +7,7 @@ def generate_audit_summary(api_key: str, df_anomalies: pd.DataFrame, total_tx: i
         return "⚠️ Masukkan DeepSeek API Key di Sidebar terlebih dahulu untuk menggunakan fitur Asisten Auditor AI."
         
     try:
-        client = openai.OpenAI(
-            api_key=sk-0930d0ee74e14cde99482cea3637a86e,
-            base_url="https://api.deepseek.com"
-        )
+        url = "https://api.deepseek.com/chat/completions"
         
         top_anomalies = df_anomalies.sort_values('Risk_Score', ascending=False).head(15)
         records_text = top_anomalies[[
@@ -33,15 +31,30 @@ def generate_audit_summary(api_key: str, df_anomalies: pd.DataFrame, total_tx: i
         3. **Rekomendasi Tindak Lanjut (Action Plan)**: Langkah investigasi konkret yang harus dilakukan tim audit internal terhadap pihak terkait.
         """
         
-        response = client.chat.completions.create(
-            model='deepseek-chat',
-            messages=[
+        payload = {
+            "model": "deepseek-chat",
+            "messages": [
                 {"role": "system", "content": "Anda adalah auditor keuangan profesional."},
                 {"role": "user", "content": prompt}
             ],
-            temperature=0.3
+            "temperature": 0.3,
+            "stream": False
+        }
+        
+        req = urllib.request.Request(
+            url,
+            data=json.dumps(payload).encode('utf-8'),
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json"
+            },
+            method="POST"
         )
-        return response.choices[0].message.content
+        
+        with urllib.request.urlopen(req) as response:
+            res_data = json.loads(response.read().decode('utf-8'))
+            return res_data['choices'][0]['message']['content']
+            
     except Exception as e:
         return f"❌ Gagal menghubungi DeepSeek API: {str(e)}"
 
@@ -50,10 +63,7 @@ def ask_audit_assistant(api_key: str, user_question: str, df_anomalies: pd.DataF
         return "⚠️ Masukkan DeepSeek API Key di Sidebar terlebih dahulu."
         
     try:
-        client = openai.OpenAI(
-            api_key=api_key,
-            base_url="https://api.deepseek.com"
-        )
+        url = "https://api.deepseek.com/chat/completions"
         
         context_data = df_anomalies[[
             'Transaction_ID', 'Timestamp', 'User_ID', 'Vendor', 'Category', 'Amount', 'Risk_Score', 'Anomaly_Reasons'
@@ -71,14 +81,29 @@ def ask_audit_assistant(api_key: str, user_question: str, df_anomalies: pd.DataF
         Berikan jawaban yang lugas, sebutkan Transaction_ID dan nominalnya jika relevan.
         """
         
-        response = client.chat.completions.create(
-            model='deepseek-chat',
-            messages=[
+        payload = {
+            "model": "deepseek-chat",
+            "messages": [
                 {"role": "system", "content": "Anda adalah asisten audit keuangan yang handal."},
                 {"role": "user", "content": prompt}
             ],
-            temperature=0.3
+            "temperature": 0.3,
+            "stream": False
+        }
+        
+        req = urllib.request.Request(
+            url,
+            data=json.dumps(payload).encode('utf-8'),
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json"
+            },
+            method="POST"
         )
-        return response.choices[0].message.content
+        
+        with urllib.request.urlopen(req) as response:
+            res_data = json.loads(response.read().decode('utf-8'))
+            return res_data['choices'][0]['message']['content']
+            
     except Exception as e:
         return f"❌ Terjadi kesalahan saat memproses pertanyaan: {str(e)}"
