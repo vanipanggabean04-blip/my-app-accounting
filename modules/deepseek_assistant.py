@@ -6,7 +6,6 @@ def generate_audit_summary(api_key: str, df_anomalies: pd.DataFrame, total_tx: i
         return "⚠️ Masukkan DeepSeek API Key di Sidebar terlebih dahulu untuk menggunakan fitur Asisten Auditor AI."
         
     try:
-        # DeepSeek menggunakan OpenAI-compatible API endpoint (https://api.deepseek.com)
         client = openai.OpenAI(
             api_key=sk-0930d0ee74e14cde99482cea3637a86e,
             base_url="https://api.deepseek.com"
@@ -52,7 +51,7 @@ def ask_audit_assistant(api_key: str, user_question: str, df_anomalies: pd.DataF
         
     try:
         client = openai.OpenAI(
-            api_key=sk-0930d0ee74e14cde99482cea3637a86e,
+            api_key=api_key,
             base_url="https://api.deepseek.com"
         )
         
