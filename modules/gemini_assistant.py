@@ -34,7 +34,7 @@ def generate_audit_summary(api_key: str, df_anomalies: pd.DataFrame, total_tx: i
         """
         
         response = client.models.generate_content(
-            model='gemini-2.5-flash',
+            model='gemini-3.5-flash',
             contents=prompt
         )
         return response.text
