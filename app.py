@@ -15,58 +15,118 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom Styling & UI Polish (Clean & Modern Light Sidebar)
+# Custom Styling & UI Polish (Ultra Modern Light Theme)
 st.markdown("""
     <style>
-    .main {
-        background-color: #f8fafc;
+    /* Global Background */
+    .stApp {
+        background-color: #f4f7fb;
     }
+    
+    /* Metrics Card Styling */
     .stMetric {
         background-color: #ffffff;
-        padding: 16px 20px;
-        border-radius: 14px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-        border: 1px solid #e2e8f0;
+        padding: 20px 24px;
+        border-radius: 16px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+        border: 1px solid #eef2f6;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-    /* Sidebar Styling - Clean & Modern Light Theme */
+    .stMetric:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+    }
+    
+    /* Sidebar Modernization */
     [data-testid="stSidebar"] {
         background-color: #ffffff;
         border-right: 1px solid #e2e8f0;
     }
+    
+    /* Author Card with gradient accent */
     .author-card {
-        background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-        border: 1px solid #cbd5e1;
-        padding: 16px;
-        border-radius: 12px;
-        margin-bottom: 20px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        background: #ffffff;
+        border-left: 5px solid #3b82f6;
+        padding: 16px 20px;
+        border-radius: 10px;
+        margin-bottom: 24px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.04);
+        border-top: 1px solid #f1f5f9;
+        border-right: 1px solid #f1f5f9;
+        border-bottom: 1px solid #f1f5f9;
     }
     .author-card h4 {
-        margin: 0 0 6px 0;
-        color: #0f172a !important;
-        font-size: 15px;
-        font-weight: 700;
+        margin: 0 0 8px 0;
+        color: #1e293b !important;
+        font-size: 16px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
     }
     .author-card p {
-        margin: 3px 0;
-        font-size: 13px;
+        margin: 4px 0;
+        font-size: 14px;
         color: #475569 !important;
+        line-height: 1.4;
     }
+    
+    /* Sidebar section panels */
     .sidebar-section {
         background: #f8fafc;
-        padding: 14px;
-        border-radius: 10px;
-        margin-bottom: 14px;
+        padding: 16px;
+        border-radius: 12px;
+        margin-bottom: 16px;
         border: 1px solid #e2e8f0;
+    }
+    
+    /* Headers Customization */
+    .main-header {
+        padding: 24px 32px;
+        background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
+    }
+    .main-header h1 {
+        color: #0f172a;
+        margin-bottom: 8px;
+        font-weight: 900;
+        font-size: 2.2rem;
+        letter-spacing: -1px;
+    }
+    .main-header p {
+        color: #64748b;
+        font-size: 1.05rem;
+        margin: 0;
+        line-height: 1.5;
+    }
+    
+    /* Tab Styling */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 8px;
+    }
+    .stTabs [data-baseweb="tab"] {
+        height: 50px;
+        white-space: pre-wrap;
+        background-color: #ffffff;
+        border-radius: 8px 8px 0 0;
+        padding: 10px 20px;
+        border: 1px solid #e2e8f0;
+        border-bottom: none;
+    }
+    .stTabs [aria-selected="true"] {
+        background-color: #f0fdf4 !important;
+        border-top: 3px solid #22c55e !important;
+        font-weight: bold;
     }
     </style>
 """, unsafe_allow_html=True)
 
 # Header Utama dengan Desain Modern
 st.markdown("""
-    <div style='padding: 22px 0; border-bottom: 2px solid #e2e8f0; margin-bottom: 25px;'>
-        <h1 style='color: #0f172a; margin-bottom: 6px; font-weight: 800;'>🛡️ Intelligent Audit: Sistem Deteksi Anomali Transaksi</h1>
-        <p style='color: #64748b; font-size: 16px; margin: 0;'>Platform Audit Keuangan Otomatis berbasis <b>Hybrid Machine Learning (Isolation Forest)</b> & <b>Deep Learning (Autoencoder)</b> untuk mendeteksi transaksi duplikat, angka bulat berulang, dan nominal di luar pola.</p>
+    <div class="main-header">
+        <h1>🛡️ Intelligent Audit System</h1>
+        <p>Platform Audit Keuangan Otomatis berbasis <b>Hybrid Machine Learning (Isolation Forest)</b> & <b>Deep Learning (Autoencoder)</b> untuk mendeteksi anomali duplikasi, pengulangan angka bulat, dan pola ekstrem secara presisi.</p>
     </div>
 """, unsafe_allow_html=True)
 
@@ -76,7 +136,7 @@ with st.sidebar:
     st.markdown("""
         <div class="author-card">
             <h4>👤 Profil Pengembang</h4>
-            <p><b>Nama:</b> Thevani Panggabean</p>
+            <p><b>Tim:</b> Thevani & Ziha</p>
             <p><b>Kelas:</b> AKP 7C</p>
             <p><b>NIM:</b> 5304230064</p>
         </div>
@@ -306,9 +366,9 @@ with tab4:
 # Footer Estetik
 st.markdown("---")
 st.markdown(
-    "<div style='text-align: center; color: #64748b; font-size: 13px; padding: 10px;'>"
-    "Dibuat dengan ❤️ oleh <b>Thevani Panggabean</b> | Kelas: <b>AKP 7C</b> | NIM: <b>5304230064</b><br>"
-    "Sistem Deteksi Anomali Transaksi (Audit AI) • Powered by Python & Streamlit"
+    "<div style='text-align: center; color: #64748b; font-size: 14px; padding: 20px; background-color: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; margin-top: 20px;'>"
+    "Dibuat dengan ❤️ oleh <b>Thevani & Ziha</b> | Kelas: <b>AKP 7C</b> | NIM: <b>5304230064</b><br>"
+    "<span style='font-size: 12px; color: #94a3b8;'>Sistem Deteksi Anomali Transaksi (Intelligent Audit System) • Powered by Python & Streamlit</span>"
     "</div>",
     unsafe_allow_html=True
 )
