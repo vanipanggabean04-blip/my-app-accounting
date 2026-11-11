@@ -169,7 +169,7 @@ with st.sidebar:
             <h4>👤 Profil Pengembang</h4>
             <p><b>Tim:</b> Thevani & Ziha</p>
             <p><b>Kelas:</b> AKP 7C</p>
-            <p><b>NIM:</b> 5304230064</p>
+            <p><b>NIM:</b> 5304230064 & 5304230083</p>
         </div>
     """, unsafe_allow_html=True)
 
@@ -398,7 +398,7 @@ with tab4:
 st.markdown("---")
 st.markdown(
     "<div style='text-align: center; color: #64748b; font-size: 14px; padding: 20px; background-color: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; margin-top: 20px;'>"
-    "Dibuat dengan ❤️ oleh <b>Thevani & Ziha</b> | Kelas: <b>AKP 7C</b> | NIM: <b>5304230064</b><br>"
+    "Dibuat dengan ❤️ oleh <b>Thevani & Ziha</b> | Kelas: <b>AKP 7C</b> | NIM: <b>5304230064 & 5304230083</b><br>"
     "<span style='font-size: 12px; color: #94a3b8;'>Sistem Deteksi Anomali Transaksi (Intelligent Audit System) • Powered by Python & Streamlit</span>"
     "</div>",
     unsafe_allow_html=True
