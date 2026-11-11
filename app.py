@@ -15,7 +15,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom Styling & UI Polish (Ultra Modern Light Theme)
+# Custom Styling & UI Polish (Ultra Modern Light Theme + Larger Sidebar)
 st.markdown("""
     <style>
     /* Global Background */
@@ -37,46 +37,77 @@ st.markdown("""
         box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
     }
     
-    /* Sidebar Modernization */
+    /* ================= SIDEBAR MODERNIZATION & LARGER UI ================= */
     [data-testid="stSidebar"] {
         background-color: #ffffff;
         border-right: 1px solid #e2e8f0;
     }
     
+    /* Memperbesar ukuran teks elemen kontrol di Sidebar */
+    [data-testid="stSidebar"] p, 
+    [data-testid="stSidebar"] .stRadio label span, 
+    [data-testid="stSidebar"] .stSelectbox label span,
+    [data-testid="stSidebar"] .stSlider label span {
+        font-size: 16px !important; 
+        color: #1e293b !important;
+    }
+    
+    /* Memperbesar dan Menonjolkan File Uploader */
+    [data-testid="stFileUploadDropzone"] {
+        padding: 2.5rem 1.5rem !important;
+        border: 2px dashed #3b82f6 !important;
+        background-color: #f0f7ff !important;
+        border-radius: 14px !important;
+        transition: all 0.3s ease;
+    }
+    [data-testid="stFileUploadDropzone"]:hover {
+        background-color: #e0efff !important;
+        border-color: #2563eb !important;
+    }
+    [data-testid="stFileUploadDropzone"] div {
+        font-size: 16px !important;
+    }
+
     /* Author Card with gradient accent */
     .author-card {
         background: #ffffff;
         border-left: 5px solid #3b82f6;
-        padding: 16px 20px;
-        border-radius: 10px;
+        padding: 20px;
+        border-radius: 12px;
         margin-bottom: 24px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.04);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.05);
         border-top: 1px solid #f1f5f9;
         border-right: 1px solid #f1f5f9;
         border-bottom: 1px solid #f1f5f9;
     }
     .author-card h4 {
         margin: 0 0 8px 0;
-        color: #1e293b !important;
-        font-size: 16px;
+        color: #0f172a !important;
+        font-size: 18px !important;
         font-weight: 800;
         letter-spacing: -0.5px;
     }
     .author-card p {
-        margin: 4px 0;
-        font-size: 14px;
+        margin: 5px 0;
+        font-size: 15px !important;
         color: #475569 !important;
-        line-height: 1.4;
+        line-height: 1.5;
     }
     
     /* Sidebar section panels */
     .sidebar-section {
         background: #f8fafc;
-        padding: 16px;
+        padding: 18px;
         border-radius: 12px;
-        margin-bottom: 16px;
+        margin-bottom: 18px;
         border: 1px solid #e2e8f0;
     }
+    .sidebar-section h4 {
+        font-size: 17px !important;
+        color: #0f172a !important;
+        margin-bottom: 12px !important;
+    }
+    /* ==================================================================== */
     
     /* Headers Customization */
     .main-header {
@@ -126,13 +157,13 @@ st.markdown("""
 st.markdown("""
     <div class="main-header">
         <h1>🛡️ Intelligent Audit System</h1>
-        <p>Platform Audit Keuangan Otomatis berbasis <b>Hybrid Machine Learning (Isolation Forest)</b> & <b>Deep Learning (Autoencoder)</b> untuk mendeteksi anomali duplikasi, pengulangan angka bulat, dan pola ekstrem secara presisi.</p>
+        <p>Platform Audit Keuangan Otomatis berbasis <b>Kecerdasan Buatan (AI)</b> menggunakan <b>Hybrid Machine Learning (Isolation Forest)</b> & <b>Deep Learning (Autoencoder)</b> untuk mendeteksi anomali duplikasi, pengulangan angka bulat, dan pola ekstrem secara presisi.</p>
     </div>
 """, unsafe_allow_html=True)
 
 # ================= SIDEBAR KONFIGURASI =================
 with st.sidebar:
-    # Profil Pembuat (Clean Light Theme)
+    # Profil Pembuat (Clean Light Theme & Larger)
     st.markdown("""
         <div class="author-card">
             <h4>👤 Profil Pengembang</h4>
